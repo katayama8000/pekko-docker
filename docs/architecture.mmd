@@ -5,7 +5,7 @@ flowchart TB
 
     subgraph docker["Docker container"]
         subgraph jvm["JVM — fat jar (app.jar)"]
-            subgraph system["ActorSystem &quot;BankSystem&quot;"]
+            subgraph system["ActorSystem: BankSystem"]
                 http["Pekko HTTP<br/>server :8080"]
                 routes["BankRoutes<br/>(REST → messages, ask pattern)"]
 
