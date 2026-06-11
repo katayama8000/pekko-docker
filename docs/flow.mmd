@@ -1,0 +1,26 @@
+%% Request flow for a deposit (and a rejected withdrawal)
+%% Render: https://mermaid.live  or  VS Code "Markdown Preview Mermaid" extension
+sequenceDiagram
+    autonumber
+    actor Client
+    participant HTTP as Pekko HTTP
+    participant Routes as BankRoutes
+    participant Actor as BankAccount actor
+
+    Note over Actor: balance = 0 (private state)
+
+    Client->>HTTP: POST /account/deposit {"amount":100}
+    HTTP->>Routes: route match + JSON unmarshal
+    Routes->>Actor: ask(Deposit(100, replyTo))
+    Note over Actor: process ONE message<br/>balance 0 → 100
+    Actor-->>Routes: Balance(100)
+    Routes-->>HTTP: 200 OK {"balance":100}
+    HTTP-->>Client: {"balance":100}
+
+    Client->>HTTP: POST /account/withdraw {"amount":999}
+    HTTP->>Routes: route match + JSON unmarshal
+    Routes->>Actor: ask(Withdraw(999, replyTo))
+    Note over Actor: 999 > balance(100)<br/>state unchanged
+    Actor-->>Routes: Rejected("Insufficient funds")
+    Routes-->>HTTP: 400 Bad Request {"error":"Insufficient funds"}
+    HTTP-->>Client: {"error":"Insufficient funds"}

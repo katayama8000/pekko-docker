@@ -35,6 +35,14 @@ just messages.
 | [`Dockerfile`](Dockerfile) | Multi-stage build: compile a fat jar with sbt, then run it on a slim JRE image. |
 | [`docker-compose.yml`](docker-compose.yml) | One-command run. |
 
+### Diagrams
+
+- Architecture: [`docs/architecture.mmd`](docs/architecture.mmd)
+- Request flow (sequence): [`docs/flow.mmd`](docs/flow.mmd)
+
+These are [Mermaid](https://mermaid.js.org/) files. View them in the VS Code
+"Markdown Preview Mermaid" extension, or paste into <https://mermaid.live>.
+
 ### How a request flows
 
 ```

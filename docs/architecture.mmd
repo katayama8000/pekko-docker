@@ -1,0 +1,28 @@
+%% Architecture of the Pekko bank-account example
+%% Render: https://mermaid.live  or  VS Code "Markdown Preview Mermaid" extension
+flowchart TB
+    client["HTTP Client<br/>(curl / browser)"]
+
+    subgraph docker["Docker container"]
+        subgraph jvm["JVM — fat jar (app.jar)"]
+            subgraph system["ActorSystem &quot;BankSystem&quot;"]
+                http["Pekko HTTP<br/>server :8080"]
+                routes["BankRoutes<br/>(REST → messages, ask pattern)"]
+
+                subgraph guardian["Guardian actor (root)"]
+                    account["BankAccount actor<br/>private state: balance<br/>processes 1 message at a time"]
+                end
+            end
+        end
+    end
+
+    client -- "HTTP request/response" --> http
+    http --> routes
+    routes -- "ask(Command, replyTo)" --> account
+    account -. "Response (Balance / Rejected)" .-> routes
+    guardian -. "spawns" .-> account
+
+    classDef actor fill:#e8f0fe,stroke:#4285f4,stroke-width:2px;
+    classDef infra fill:#f1f3f4,stroke:#9aa0a6;
+    class account,guardian actor;
+    class http,routes infra;
